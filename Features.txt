@@ -1,0 +1,7 @@
+DXY Curncy
+EUR Curncy
+GT10 Govt
+GT2 Govt
+GT5 Govt
+SPX Index
+VIX Index
