@@ -4,8 +4,9 @@
 """
 import pandas as pd
 import datetime as dt
+from pathlib import Path
 
-directory = 'Datos'
+directory = Path("Datos/")
 
 def reemplazar(string,old,new):
     # Reemplazo los signos # con nada
@@ -16,7 +17,8 @@ def reemplazar(string,old,new):
 class anuales:
     def importar(self,file, sep = ',', delimiter = None):
         # Importo los datos desde una direccion
-        self.df = pd.read_csv(file, sep = sep, delimiter = delimiter)
+        the_file = open(file)
+        self.df = pd.read_csv(the_file, sep = sep, delimiter = delimiter)
     def quitar_num(self, columna,file, sep = ',', delimiter = None):
         # Le quito los signos # a todo una serie de un DF
         self.importar(file,sep,delimiter)
@@ -34,9 +36,9 @@ def crearDF(simbolo,años, Features = False):
     for i in años:
         activo = anuales()
         if Features:
-            activo.indice_fechas('Date',directory+'\\'+simbolo+'_1 Dia_'+str(i)+'.csv')
+            activo.indice_fechas('Date',directory / (simbolo+'_1 Dia_'+str(i)+'.csv'))
         else:
-            activo.indice_fechas('Date',directory+'\\'+simbolo+' US Equity_1 Dia_'+str(i)+'.csv')
+            activo.indice_fechas('Date',directory / (simbolo+' US Equity_1 Dia_'+str(i)+'.csv'))
         
         activo.df = activo.df.iloc[~activo.df.index.duplicated()]
         DF = DF.append(activo.df)
