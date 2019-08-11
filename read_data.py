@@ -31,9 +31,9 @@ class anuales:
         self.df['Date'] = pd.to_datetime(self.df['Date'], format = '%Y-%m-%d')
         self.df.index = self.df['Date']; del self.df['Date']
 
-def crearDF(simbolo,años, Features = False):
+def crearDF(simbolo,years, Features = False):
     DF = pd.DataFrame()
-    for i in años:
+    for i in years:
         activo = anuales()
         if Features:
             activo.indice_fechas('Date',directory / (simbolo+'_1 Dia_'+str(i)+'.csv'))
@@ -44,13 +44,13 @@ def crearDF(simbolo,años, Features = False):
         DF = DF.append(activo.df)
     return DF
 
-def organizarTodo(simbolos, años, Features = False):
+def organizarTodo(simbolos, years, Features = False):
     """
     simbolos: es una lista que contiene los simbolos que se desean importar
-    años: una lista con los años que se desean utilizar
+    years: una lista con los years que se desean utilizar
     """
     diccionario = {}
     for j in simbolos:
-        diccionario[j] = crearDF(j,años,Features)
+        diccionario[j] = crearDF(j,years,Features)
         diccionario[j] = diccionario[j].loc[~diccionario[j].index.duplicated()]
     return diccionario
