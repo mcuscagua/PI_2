@@ -1,9 +1,5 @@
-import read_data as imp
 import numpy as np
 import pandas as pd
-import pyfolio as pf
-import matplotlib.pyplot as plt
-import seaborn as sns
 from ta import *
 import itertools as it
 
@@ -27,14 +23,19 @@ def past_return(x,n):
     return y
 
 class EigTrade():
-    def __init__(self, dr, Time_Window, P_Ret, max_min_tw, n_means, windows_ref, precision):
-        self.dr = dr
-        self.Time_Window = Time_Window
-        self.P_Ret = P_Ret
-        self.max_min_tw = max_min_tw
-        self.n_means = n_means
-        self.windows_ref = windows_ref
-        self.precision = precision
+    def __init__(self, DATA, FEAT, dr, Time_Window, P_Ret, max_min_tw, n_means, windows_ref, precision, long_short):
+        self.dr = dr                        # Desired return
+        self.Time_Window = Time_Window      # Time window to see into the future
+        self.P_Ret = P_Ret                  # Past return to consider
+        self.max_min_tw = max_min_tw        # timewindow for support and resistance
+        self.n_means = n_means              # moving averages for features
+        self.windows_ref = windows_ref      # past information needed to normalize
+        self.precision = precision          # precision to pick the number of eigen vectors to use
+        self.long_short = long_short        # long-recon, long-space, short-space, short-space
+        self.hist_data = DATA
+        self.hist_feature = FEAT
+
+        self.Dates_of_Interest = pd.DataFrame(columns=self.hist_data[[x for x in self.hist_data.keys()][0]].columns)
 
         self.epsilon_distance = 24.379236091501802
         self.epsilon_reconstruction = 48.960341149199174
@@ -42,10 +43,10 @@ class EigTrade():
         self.dropable_col = ['volatility_kchi', 'volatility_kcli', 'trend_adx', 'trend_adx_pos',
                              'volatility_atr', 'volatility_bbhi', 'volatility_dchi', 'trend_adx_neg']
 
-    def getHistFeat(self, hist_feature):
-        self.HF = pd.DataFrame(columns=hist_feature.keys())
+    def getHistFeat(self):
+        self.HF = pd.DataFrame(columns=self.hist_feature.keys())
 
-        for feat, df in hist_feature.items():
+        for feat, df in self.hist_feature.items():
             df_aux = df.copy()
             self.HF[feat] = df_aux['Close']
             for i in it.product(*self.n_means):
@@ -67,14 +68,18 @@ class EigTrade():
                                                                                      min_periods=1).mean()
         self.HF = self.HF.apply(normalize, time=self.windows_ref)
 
-    def getDatesInterest(self, hist_data):
+    def getDatesInterest(self):
         self.dates_indexes = {}
-        for key, value in hist_data.items():
-            self.dates_indexes[key] = value['Close'] / value['Close'].shift(-self.Time_Window) - 1 > self.dr
+        for key, value in self.hist_data.items():
+            if 'long' in self.long_short:
+                self.dates_indexes[key] = value['Close'] / value['Close'].shift(-self.Time_Window) - 1 > self.dr
+            else:
+                self.dates_indexes[key] = value['Close'] / value['Close'].shift(-self.Time_Window) - 1 < self.dr
 
-    def buildHistData(self, hist_data):
-        self.hist_data = hist_data
-        getDatesInterest(self.hist_data)
+
+
+    def buildHistData(self):
+        self.getDatesInterest()
         for share, df1 in self.hist_data.items():
             df_aux = df1.copy()
             df_aux = add_all_ta_features(df_aux, "Open", "High", "Low", "Close", "Volume", fillna=True)
@@ -101,8 +106,6 @@ class EigTrade():
 
             self.hist_data[share] = df_aux
 
-        self.Dates_of_Interest = pd.DataFrame(columns=self.hist_data[[x for x in self.hist_data.keys()][0]].columns)
-
         for share, df in self.hist_data.items():
             self.Dates_of_Interest = self.Dates_of_Interest.append(df.iloc[self.dates_indexes[share].values])
 
@@ -126,7 +129,12 @@ class EigTrade():
         self.reduced_eig = np.array(self.eigvectors_sort[:self.K])
         self.eig_trade = np.dot(self.reduced_eig, self.Phi_Mat_centered)
 
-    def getDistance(self, day, mode = 'recon'):
+    def main(self):
+        self.getHistFeat()
+        self.buildHistData()
+        self.BuildTradeSpace()
+
+    def getDistance(self, day, mode = 'long-recon'):
 
         ob_cent = day.values - self.phi_mean[:, 0]
         weights = np.dot(self.reduced_eig, ob_cent).reshape((1, self.K))
@@ -135,11 +143,22 @@ class EigTrade():
         dist_list = [np.linalg.norm(self.eig_trade[:, j] - weights.transpose()) for j in range(self.eig_trade.shape[1])]
         minESpace = min(dist_list)
 
-        if mode == 'recon':
-            return Recon < self.epsilon_reconstruction
-        if mode != 'recon':
-            return minESpace < self.epsilon_distance
+        if mode == 'long-recon' and Recon < self.epsilon_reconstruction:
+            return 1
+        else:
+            return 0
 
+        if mode != 'long-space' and minESpace < self.epsilon_distance:
+            return 1
+        else:
+            return 0
 
+        if mode == 'short-recon' and Recon < self.epsilon_reconstruction:
+            return -1
+        else:
+            return 0
 
-
+        if mode != 'short-space' and minESpace < self.epsilon_distance:
+            return -1
+        else:
+            return 0
