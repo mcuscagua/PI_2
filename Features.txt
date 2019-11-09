@@ -5,3 +5,24 @@ GT2 Govt
 GT5 Govt
 SPX Index
 VIX Index
+CNCPIYOY Index
+CNGDPYOY Index
+CNUERATE Index
+CPI YOY Index
+GDP CQOQ Index
+GDP Curncy
+HKD Curncy
+JPY Curncy
+SHCOMP Index
+UKGRABIY Index
+UKRPCJYR Index
+UKUEILOR Index
+UKX Index
+USDAUD Curncy
+USDCAD Curncy
+USDCHF Curncy
+USDGBP Curncy
+USDNOK Curncy
+USDNZD Curncy
+USDSEK Curncy
+USURTOT Index
