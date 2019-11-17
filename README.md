@@ -1,5 +1,13 @@
 # PI_2
 
+Trabajo desarrollado por:
+
+- Liceth Mosquera
+- Juan Diego Estrada
+- Javier Rosso
+- Johan Rios
+- Juan Mauricio Cuscagua
+
 ### Datos:
 
 - En la carpeta Datos se encuentran los csv para construir las series de tiempo de los precios de los activos usados en el ejercicio.
