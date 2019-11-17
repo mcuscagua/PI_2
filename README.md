@@ -1,15 +1,28 @@
 # PI_2
-Por definir
 
-http://halweb.uc3m.es/esp/Personal/personas/amalonso/esp/ASDM-C02-clustering.pdf
-http://www1.cs.columbia.edu/~gravano/Papers/2017/tods17.pdf
-https://beta.vu.nl/nl/Images/stageverslag-roelofsen_tcm235-882304.pdf
-file:///home/jriosna1/Downloads/Modified_k-means_algorithm_for_clustering_stock_ma.pdf
-https://www.mlq.ai/stock-market-clustering-with-k-means/
-file:///home/jriosna1/Downloads/ClusteringStockMarketsforBalancedPortfolioConstruction.pdf
-https://www.cs.princeton.edu/sites/default/files/uploads/karina_marvin.pdf
-https://pdfs.semanticscholar.org/0530/80a9e72656b90fdec1e438b13491544a06ed.pdf
-https://medium.com/@saadahmed387/machine-learning-for-stock-clustering-using-k-means-algorithm-126bc1ace4e1
-https://pythonforfinance.net/2018/02/08/stock-clusters-using-k-means-algorithm-in-python/
-https://pdfs.semanticscholar.org/81e3/f9bccec3bb982d3dab010bb8cd620ccc7f40.pdf
-https://pythonforfinance.net/2018/02/08/stock-clusters-using-k-means-algorithm-in-python/
+### Datos:
+
+- En la carpeta Datos se encuentran los csv para construir las series de tiempo de los precios de los activos usados en el ejercicio.
+
+### Generador de Backtesting de estrategias iniciales:
+
+- Los notebooks "Backtesting_Estrategias", "Backtesting_Estrategias_Individuales", "Backtesting_Estrategias_Regionales" y "Backtesting_Estrategias_Sectoriales" contienen el backtesting de las estrategias de factores usando los diferentes conjuntos de activos.
+
+### Backtesting de clustering de estrategias:
+Encontrará 3 archivos:
+
+- 1_Backtesting_General_Clasificadores_Sectoriales: Backtesting de los algoritmos de clustering sobre las estrategias de la canasta de ETF
+- 2_Backtesting_General_Clasificadores_Individuales: Backtesting de los algoritmos de clustering sobre las estrategias de la canasta de activos individuales
+- 3_Backtesting_General_Clasificadores_Conjunta: Backtesting de los algoritmos de clustering sobre las estrategias de la canasta formada con todos los activos disponibles
+
+### Archivos de apoyo:
+
+- Alphas101: módulo de python construido para facilitar la invocación de las funciones que calculan los factores Alpha.
+- read_data: módulo de python construido para la lectura de los datos.
+
+### Archivos csv:
+ - Aquellos cuyo título inicia con "Rentabilidad de estrategias" corresponden a los retornos diarios de las estrategias a revisar para formar clusters.
+ - Aquellos cuyo título inicia con "Cluster Rent" representan las rentabilidades diarias del backtesting de los algoritmos de clustering.
+ 
+ 
+Finalmente, el notebook Analisis de Resultados genera las gráficas implementadas en la presentación así como la tabla de resultados de los algoritmos.
